@@ -11,6 +11,8 @@ interface NotificationInterface extends MessageInterface
     const STATUS_PENDING = 'pending';
     const STATUS_FAILED = 'failed';
 
+    public function isValid(): bool;
+
     /**
      * Gateway Reference
      *

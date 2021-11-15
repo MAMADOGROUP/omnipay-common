@@ -11,6 +11,7 @@ use Money\Formatter\DecimalMoneyFormatter;
 use Money\Money;
 use Money\Number;
 use Money\Parser\DecimalMoneyParser;
+use Omnipay\Common\AbstractGateway;
 use Omnipay\Common\CreditCard;
 use Omnipay\Common\Exception\InvalidRequestException;
 use Omnipay\Common\Exception\RuntimeException;
@@ -19,6 +20,7 @@ use Omnipay\Common\Http\Client;
 use Omnipay\Common\Http\ClientInterface;
 use Omnipay\Common\ItemBag;
 use Omnipay\Common\ParametersTrait;
+use Omnipay\Common\PaymentInterface;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 
@@ -674,6 +676,41 @@ abstract class AbstractRequest implements RequestInterface
     public function setPaymentMethod($value)
     {
         return $this->setParameter('paymentMethod', $value);
+    }
+
+    /**
+     * @return PaymentInterface
+     */
+    public function getPayment(): PaymentInterface
+    {
+        return $this->getParameter('payment');
+    }
+
+    /**
+     * @param PaymentInterface $payment
+     * @return $this
+     */
+    public function setPayment(PaymentInterface $payment)
+    {
+        return $this->setParameter('payment', $payment);
+    }
+
+    /**
+     * @param PaymentInterface $payment
+     * @return $this
+     */
+    public function injectPayment(PaymentInterface $payment)
+    {
+        $this
+            ->setPayment($payment)
+            ->setAmount($payment->getAmount())
+            ->setCurrency($payment->getCurrency())
+            ->setDescription($payment->getDescription())
+            ->setReturnUrl($payment->getReturnUrl())
+            ->setTransactionId($payment->getTransactionId())
+            ->setTransactionReference($payment->getTransactionReference());
+
+        return $this;
     }
 
     /**
